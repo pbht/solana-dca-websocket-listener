@@ -1162,7 +1162,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "solana-ws-listener"
+name = "solana-dca-websocket-listener"
 version = "0.1.0"
 dependencies = [
  "dotenv",
