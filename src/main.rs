@@ -56,27 +56,33 @@ async fn main() -> Result<(), Box<dyn Error>> {
                             let input_ticker = get_ticker(&client, &http_url, &dca_data.input_mint).await?;
                             let output_ticker = get_ticker(&client, &http_url, &dca_data.output_mint).await?;
 
-                            let dca = DcaResult {
-                                signature: sx,
-                                dca_data,
-                                input_ticker,
-                                output_ticker
-                            };
+                            // Filter USDC trades >= 10,000
+                            if let "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" = dca_data.input_mint.as_str() {
+                                if dca_data.input_amount >= 9999.99 {
+                                    let dca = DcaResult {
+                                        signature: sx,
+                                        dca_data,
+                                        input_ticker,
+                                        output_ticker
+                                    };
+                                    println!("{}", dca);
+                                }
+                            }
 
-                            println!("{}", dca);
                         }
                         Err(e) => {
                             println!("Error: {}", e);
                         }
                     }
 
-
                 }
             }
+            
             Ok(Message::Close(_)) => {
                 println!("Server closed connection.");
                 break;
             }
+
             Ok(_) => {}
             Err(e) => {
                 eprintln!("WebSocket error: {}", e);

@@ -21,10 +21,6 @@ pub async fn get_transaction(client: &Client, url: &String, sx: &String) -> Resu
         .await?
         .text()
         .await?;
-    
-    // println!("GET_TRANSACTION");
-    // let pretty_print: Value = serde_json::from_str(&response)?;
-    // println!("{}", serde_json::to_string_pretty(&pretty_print)?);
         
     let parsed_response: HeliusGetTransactionResponse = serde_json::from_str(response.as_str())?;
 
@@ -48,10 +44,6 @@ pub async fn get_ticker(client: &Client, url: &String, mint: &String) -> Result<
         .await?
         .text()
         .await?;
-
-    // let pretty_print: Value = serde_json::from_str(&response)?;
-    // println!("GET_TICKER");
-    // println!("{}", serde_json::to_string_pretty(&pretty_print)?);
 
     let parsed_response: HeliusGetAssetResponse = serde_json::from_str(response.as_str())?;
     let symbol = parsed_response.result.ok_or("Error parsing DAS result.")?.content.metadata.symbol;
