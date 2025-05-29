@@ -18,3 +18,6 @@ This wallet opened ~$1.75M worth of DCAs to buy FARTCOIN
 - [ ] Query $ value of input token (useful for non USDC / SOL inputs)
 - [ ] Filter orders above a $ value specified by CLI argument
 - [ ] Flag if a DCA was closed
+
+# Notes
+This was one of my earlier Rust scripts. I intend to rewrite this more idiomatically and with better error handling.
