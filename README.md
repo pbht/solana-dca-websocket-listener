@@ -16,7 +16,7 @@ This wallet opened ~$1.75M worth of DCAs to buy FARTCOIN
 - [x] Query tickers from Helius DAS
 - [x] Filter trades >= 10k USDC (CA and filter amount are hardcoded)
 - [ ] Query $ value of input token (useful for non USDC / SOL inputs)
-- [ ] Filter orders above a $ value specified by CLI argument
+- [ ] Filter orders above a $ value specified by CLI argument (still need to integrate CLAP)
 - [ ] Flag if a DCA was closed
 
 # Notes

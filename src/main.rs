@@ -10,11 +10,17 @@ mod utils;
 use types::{DcaResult, HeliusLogsSubscribeResponse};
 use utils::{get_ticker, get_transaction};
 
+const SOL_MINT: &str = "So11111111111111111111111111111111111111112";
+const USDC_MINT: &str = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     dotenv().ok();
-
     let helius_api_key = env::var("HELIUS_API_KEY")?;
+
+    let usdc_threshold = 9999.99;
+    let sol_threshold = 99.99;
+
     let ws_url = format!("wss://mainnet.helius-rpc.com/?api-key={}", &helius_api_key);
     let http_url = format!("https://mainnet.helius-rpc.com?api-key={}", &helius_api_key);
 
@@ -67,19 +73,32 @@ async fn main() -> Result<(), Box<dyn Error>> {
                             let output_ticker =
                                 get_ticker(&client, &http_url, &dca_data.output_mint).await?;
 
-                            // Filter USDC trades >= 10,000
-                            if let "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" =
-                                dca_data.input_mint.as_str()
-                            {
-                                if dca_data.input_amount >= 9999.99 {
-                                    let dca = DcaResult {
-                                        signature: sx,
-                                        dca_data,
-                                        input_ticker,
-                                        output_ticker,
-                                    };
-                                    println!("{}", dca);
+                            // Filter large trades
+                            // TODO: take thresholds from cli args
+                            match dca_data.input_mint.as_str() {
+                                USDC_MINT => {
+                                    if dca_data.input_amount >= usdc_threshold {
+                                        let dca = DcaResult {
+                                            signature: sx,
+                                            dca_data,
+                                            input_ticker,
+                                            output_ticker,
+                                        };
+                                        println!("{}", dca);
+                                    }
                                 }
+                                SOL_MINT => {
+                                    if dca_data.input_amount >= sol_threshold {
+                                        let dca = DcaResult {
+                                            signature: sx,
+                                            dca_data,
+                                            input_ticker,
+                                            output_ticker,
+                                        };
+                                        println!("{}", dca);
+                                    }
+                                }
+                                _ => {}
                             }
                         }
                         Err(e) => {
@@ -95,6 +114,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             }
 
             Ok(_) => {}
+
             Err(e) => {
                 eprintln!("WebSocket error: {}", e);
                 break;
