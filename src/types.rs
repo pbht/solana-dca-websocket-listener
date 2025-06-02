@@ -1,26 +1,26 @@
-use serde::Deserialize;
 use core::fmt;
+use serde::Deserialize;
 use std::{error::Error, fmt::Formatter};
 
 #[derive(Debug, Deserialize)]
 pub struct HeliusLogsSubscribeResponse {
-    pub params: Option<HeliusParams>
+    pub params: Option<HeliusParams>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct HeliusParams {
-    pub result: HeliusParamsResult
+    pub result: HeliusParamsResult,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct HeliusParamsResult {
-    pub value: HeliusParamsResultValue
+    pub value: HeliusParamsResultValue,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct HeliusParamsResultValue {
     pub signature: String,
-    pub logs: Vec<String>
+    pub logs: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -31,31 +31,31 @@ pub struct HeliusGetTransactionResponse {
 #[derive(Debug, Deserialize)]
 pub struct HeliusResult {
     pub transaction: HeliusTransaction,
-    pub meta: HeliusMeta
+    pub meta: HeliusMeta,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct HeliusMeta {
-    pub post_token_balances: Vec<HeliusPostTokenBalances>
+    pub post_token_balances: Vec<HeliusPostTokenBalances>,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct HeliusPostTokenBalances {
     account_index: u32,
-    ui_token_amount: HeliusUiTokenAmount
+    ui_token_amount: HeliusUiTokenAmount,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct HeliusUiTokenAmount {
-    pub ui_amount: Option<f64>
+    pub ui_amount: Option<f64>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct HeliusTransaction {
-    pub message: HeliusTransactionMessage
+    pub message: HeliusTransactionMessage,
 }
 
 #[derive(Debug, Deserialize)]
@@ -69,7 +69,7 @@ pub struct HeliusTransactionMessage {
 #[serde(rename_all = "camelCase")]
 pub struct HeliusInstruction {
     pub accounts: Vec<u32>,
-    pub program_id_index: u32
+    pub program_id_index: u32,
 }
 
 #[derive(Debug)]
@@ -77,7 +77,7 @@ pub struct JupiterDcaData {
     pub wallet: String,
     pub input_mint: String,
     pub input_amount: f64,
-    pub output_mint: String
+    pub output_mint: String,
 }
 
 #[derive(Debug)]
@@ -85,28 +85,27 @@ pub struct DcaResult {
     pub signature: String,
     pub dca_data: JupiterDcaData,
     pub input_ticker: String,
-    pub output_ticker: String
+    pub output_ticker: String,
 }
-
 
 #[derive(Debug, Deserialize)]
 pub struct HeliusGetAssetResponse {
-    pub result: Option<HeliusDasResult>
+    pub result: Option<HeliusDasResult>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct HeliusDasResult {
-    pub content: HeliusDasContent
+    pub content: HeliusDasContent,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct HeliusDasContent {
-    pub metadata: HeliusDasMetadata
+    pub metadata: HeliusDasMetadata,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct HeliusDasMetadata {
-    pub symbol: String
+    pub symbol: String,
 }
 
 impl HeliusGetTransactionResponse {
@@ -119,10 +118,7 @@ impl HeliusGetTransactionResponse {
             .message
             .account_keys;
 
-        let instructions = &result
-            .transaction
-            .message
-            .instructions;
+        let instructions = &result.transaction.message.instructions;
 
         const DCA_ADDRESS: &str = "DCA265Vj8a9CEuX1eb1LWRnDT7uK6q1xMipnNyatn23M";
         let account_indices = &instructions
@@ -147,12 +143,16 @@ impl HeliusGetTransactionResponse {
             .meta
             .post_token_balances
             .iter()
-            .find(|bal|  bal.account_index as usize == in_ata_idx )
+            .find(|bal| bal.account_index as usize == in_ata_idx)
             .and_then(|bal| bal.ui_token_amount.ui_amount)
             .ok_or("Couldn't find input token amount")?;
 
-        Ok(JupiterDcaData {wallet, input_mint, input_amount, output_mint })
-
+        Ok(JupiterDcaData {
+            wallet,
+            input_mint,
+            input_amount,
+            output_mint,
+        })
     }
 }
 
