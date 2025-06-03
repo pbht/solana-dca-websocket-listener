@@ -29,12 +29,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let (mut ws_stream, _) = connect_async(ws_url.as_str()).await?;
     let client = Client::new();
 
-    println!("Connected to Helius WebSocket.");
-    println!(
-        "Listening for DCAs with input amounts of over {} USDC or {} SOL.",
-        usdc_threshold, sol_threshold
-    );
-
     let subscribe_payload = json!({
         "jsonrpc": "2.0",
         "id": 1,
@@ -51,6 +45,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let payload_str = subscribe_payload.to_string();
     ws_stream.send(Message::Text(payload_str)).await?;
+
+    println!("Connected to Helius WebSocket.");
+    println!(
+        "Listening for DCAs with input amounts of over {} USDC or {} SOL.",
+        usdc_threshold, sol_threshold
+    );
 
     while let Some(msg) = ws_stream.next().await {
         match msg {
