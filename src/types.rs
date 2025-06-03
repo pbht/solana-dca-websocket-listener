@@ -113,11 +113,7 @@ impl HeliusGetTransactionResponse {
     pub fn process_data(&self) -> Result<JupiterDcaData, Box<dyn Error>> {
         let result = self.result.as_ref().ok_or("Missing result field.")?;
 
-        let accounts = &result
-            // .ok_or("Couldn't find the result of the request.")?
-            .transaction
-            .message
-            .account_keys;
+        let accounts = &result.transaction.message.account_keys;
 
         let instructions = &result.transaction.message.instructions;
 
