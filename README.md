@@ -5,6 +5,9 @@
 4. Build with `cargo build --release`
 5. Run with `./target/release/solana-dca-websocket-listener` to run the script fully optimized
 
+# CLI Args
+The script defaults to flagging DCAs with SOL and USDC inputs above 5,000 USDC / 50 SOL in value. These parameters can be specified using the `--usdc` and `--sol` flags. For example, `./target/release/solana-dca-websocket-listener --usdc 10000` would flag all DCAs opened with input amounts of over 50 SOL (the default) or 10,000 USDC.
+
 # INTERESTING OBSERVATIONS
 ![$1M Fartcoin DCA](assets/fartcoin-1m-dca.png)
 ![$750K Fartcoin DCA](assets/fartcoin-750k-dca.png)
@@ -17,6 +20,7 @@ This wallet opened ~$1.75M worth of DCAs to buy FARTCOIN
 - [ ] Query $ value of input token (useful for non USDC / SOL inputs)
 - [x] Filter orders above a $ value specified by CLI argument (have different thresholds for SOL and USDC inputs)
 - [ ] Flag if a DCA was closed
+- [ ] Add a --no-filter CLI flag to output every transaction despite input amount or input token
 
 # Notes
 This was one of my earlier Rust scripts. I intend to rewrite this more idiomatically and with better error handling.
