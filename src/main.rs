@@ -30,6 +30,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let client = Client::new();
 
     println!("Connected to Helius WebSocket.");
+    println!(
+        "Listening for DCAs with input amounts of over {} USDC or {} SOL.",
+        usdc_threshold, sol_threshold
+    );
 
     let subscribe_payload = json!({
         "jsonrpc": "2.0",
