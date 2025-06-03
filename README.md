@@ -22,6 +22,7 @@ This wallet opened ~$1.75M worth of DCAs to buy FARTCOIN
 - [ ] Flag if a DCA was closed
 - [ ] Add a --no-filter CLI flag to output every transaction despite input amount or input token
 - [ ] Auto-reconnect when websocket connection is dropped
+- [ ] (Longer term) add trade execution to frontrun large DCAs, close position if DCA is cancelled
 
 # Notes
 This was one of my earlier Rust scripts. I intend to rewrite this more idiomatically and with better error handling. Working with the Jupiter DCA IDL has given me an idea to build a library (perhaps a macro will suffice?) that takes in an IDL as input and then is able to deserialize the transaction data such that the user can access the fields as they would expect to. I don't think this will be too hard to implement for Anchor programs and is a direction I would be interested in pursuing in the future.
