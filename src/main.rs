@@ -1,3 +1,4 @@
+use clap::Parser;
 use dotenv::dotenv;
 use futures_util::{SinkExt, StreamExt};
 use reqwest::Client;
@@ -7,7 +8,7 @@ use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
 
 mod types;
 mod utils;
-use types::{DcaResult, HeliusLogsSubscribeResponse};
+use types::{Args, DcaResult, HeliusLogsSubscribeResponse};
 use utils::{get_ticker, get_transaction};
 
 const SOL_MINT: &str = "So11111111111111111111111111111111111111112";
@@ -18,8 +19,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
     dotenv().ok();
     let helius_api_key = env::var("HELIUS_API_KEY")?;
 
-    let usdc_threshold = 9999.99;
-    let sol_threshold = 99.99;
+    let args = Args::parse();
+    let usdc_threshold = args.usdc;
+    let sol_threshold = args.sol;
 
     let ws_url = format!("wss://mainnet.helius-rpc.com/?api-key={}", &helius_api_key);
     let http_url = format!("https://mainnet.helius-rpc.com?api-key={}", &helius_api_key);
@@ -74,7 +76,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                 get_ticker(&client, &http_url, &dca_data.output_mint).await?;
 
                             // Filter large trades
-                            // TODO: take thresholds from cli args
                             match dca_data.input_mint.as_str() {
                                 USDC_MINT => {
                                     if dca_data.input_amount >= usdc_threshold {

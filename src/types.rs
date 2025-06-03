@@ -1,3 +1,4 @@
+use clap::Parser;
 use core::fmt;
 use serde::Deserialize;
 use std::{error::Error, fmt::Formatter};
@@ -168,4 +169,12 @@ impl fmt::Display for DcaResult {
             self.signature
         )
     }
+}
+
+#[derive(Parser, Debug)]
+pub struct Args {
+    #[arg(long, default_value = "5000.0")]
+    pub usdc: f64,
+    #[arg(long, default_value = "50.0")]
+    pub sol: f64,
 }
