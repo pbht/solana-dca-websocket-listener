@@ -30,7 +30,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let (mut ws_stream, _) = connect_async(ws_url.as_str()).await?;
     let client = Client::new();
 
-    let subscribe_payload = json!({
+    let subscribe_payload_str = json!({
         "jsonrpc": "2.0",
         "id": 1,
         "method": "logsSubscribe",
@@ -42,10 +42,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 "commitment": "finalized"
             }
         ]
-    });
-
-    let payload_str = subscribe_payload.to_string();
-    ws_stream.send(Message::Text(payload_str)).await?;
+    })
+    .to_string();
+    ws_stream.send(Message::Text(subscribe_payload_str)).await?;
 
     println!("Connected to Helius WebSocket.");
     match no_filter {
@@ -87,38 +86,26 @@ async fn main() -> Result<(), Box<dyn Error>> {
                             let output_ticker =
                                 get_ticker(&client, &http_url, &dca_data.output_mint).await?;
 
+                            let dca = DcaResult {
+                                signature: sx,
+                                dca_data: dca_data.clone(),
+                                input_ticker,
+                                output_ticker,
+                            };
+
                             // Filter large trades
                             match no_filter {
                                 true => {
-                                    let dca = DcaResult {
-                                        signature: sx,
-                                        dca_data,
-                                        input_ticker,
-                                        output_ticker,
-                                    };
                                     println!("{}", dca);
                                 }
-
                                 false => match dca_data.input_mint.as_str() {
                                     USDC_MINT => {
                                         if dca_data.input_amount >= usdc_threshold {
-                                            let dca = DcaResult {
-                                                signature: sx,
-                                                dca_data,
-                                                input_ticker,
-                                                output_ticker,
-                                            };
                                             println!("{}", dca);
                                         }
                                     }
                                     SOL_MINT => {
                                         if dca_data.input_amount >= sol_threshold {
-                                            let dca = DcaResult {
-                                                signature: sx,
-                                                dca_data,
-                                                input_ticker,
-                                                output_ticker,
-                                            };
                                             println!("{}", dca);
                                         }
                                     }

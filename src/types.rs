@@ -73,7 +73,7 @@ pub struct HeliusInstruction {
     pub program_id_index: u32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct JupiterDcaData {
     pub wallet: String,
     pub input_mint: String,
