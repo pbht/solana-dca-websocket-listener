@@ -22,6 +22,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
     let usdc_threshold = args.usdc;
     let sol_threshold = args.sol;
+    let no_filter = args.no_filter;
 
     let ws_url = format!("wss://mainnet.helius-rpc.com/?api-key={}", &helius_api_key);
     let http_url = format!("https://mainnet.helius-rpc.com?api-key={}", &helius_api_key);
@@ -47,10 +48,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
     ws_stream.send(Message::Text(payload_str)).await?;
 
     println!("Connected to Helius WebSocket.");
-    println!(
-        "Listening for DCAs with input amounts of over {} USDC or {} SOL.",
-        usdc_threshold, sol_threshold
-    );
+    match no_filter {
+        true => {
+            println!("Listening for all DCAs.");
+        }
+        false => {
+            println!(
+                "Listening for DCAs with input amounts of over {} USDC or {} SOL.",
+                usdc_threshold, sol_threshold
+            );
+        }
+    }
 
     while let Some(msg) = ws_stream.next().await {
         match msg {
@@ -80,30 +88,42 @@ async fn main() -> Result<(), Box<dyn Error>> {
                                 get_ticker(&client, &http_url, &dca_data.output_mint).await?;
 
                             // Filter large trades
-                            match dca_data.input_mint.as_str() {
-                                USDC_MINT => {
-                                    if dca_data.input_amount >= usdc_threshold {
-                                        let dca = DcaResult {
-                                            signature: sx,
-                                            dca_data,
-                                            input_ticker,
-                                            output_ticker,
-                                        };
-                                        println!("{}", dca);
-                                    }
+                            match no_filter {
+                                true => {
+                                    let dca = DcaResult {
+                                        signature: sx,
+                                        dca_data,
+                                        input_ticker,
+                                        output_ticker,
+                                    };
+                                    println!("{}", dca);
                                 }
-                                SOL_MINT => {
-                                    if dca_data.input_amount >= sol_threshold {
-                                        let dca = DcaResult {
-                                            signature: sx,
-                                            dca_data,
-                                            input_ticker,
-                                            output_ticker,
-                                        };
-                                        println!("{}", dca);
+
+                                false => match dca_data.input_mint.as_str() {
+                                    USDC_MINT => {
+                                        if dca_data.input_amount >= usdc_threshold {
+                                            let dca = DcaResult {
+                                                signature: sx,
+                                                dca_data,
+                                                input_ticker,
+                                                output_ticker,
+                                            };
+                                            println!("{}", dca);
+                                        }
                                     }
-                                }
-                                _ => {}
+                                    SOL_MINT => {
+                                        if dca_data.input_amount >= sol_threshold {
+                                            let dca = DcaResult {
+                                                signature: sx,
+                                                dca_data,
+                                                input_ticker,
+                                                output_ticker,
+                                            };
+                                            println!("{}", dca);
+                                        }
+                                    }
+                                    _ => {}
+                                },
                             }
                         }
                         Err(e) => {

@@ -173,4 +173,6 @@ pub struct Args {
     pub usdc: f64,
     #[arg(long, default_value = "50.0")]
     pub sol: f64,
+    #[arg(long, default_value = "false")]
+    pub no_filter: bool,
 }
