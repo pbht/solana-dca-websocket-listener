@@ -6,7 +6,8 @@
 5. Run with `./target/release/solana-dca-websocket-listener` to run the script fully optimized
 
 # CLI Args
-The script defaults to flagging DCAs with SOL and USDC inputs above 5,000 USDC / 50 SOL in value. These parameters can be specified using the `--usdc` and `--sol` flags. For example, `./target/release/solana-dca-websocket-listener --usdc 10000` would flag all DCAs opened with input amounts of over 50 SOL (the default) or 10,000 USDC.
+The script defaults to flagging DCAs with SOL and USDC inputs above 5,000 USDC / 50 SOL in value. These parameters can be specified using the `--usdc` and `--sol` flags. For example, `./target/release/solana-dca-websocket-listener --usdc 10000` would flag all DCAs opened with input amounts of over 50 SOL (the default) or 10,000 USDC. \
+Adding the `--no-filter` flag and running `./target/release/solana-dca-websocket-listener --no-filter` outputs all new DCAs, rather than those above the default threshold.
 
 # INTERESTING OBSERVATIONS
 ![$1M Fartcoin DCA](assets/fartcoin-1m-dca.png)
@@ -20,9 +21,10 @@ This wallet opened ~$1.75M worth of DCAs to buy FARTCOIN
 - [ ] Query $ value of input token (useful for non USDC / SOL inputs)
 - [x] Filter orders above a $ value specified by CLI argument (have different thresholds for SOL and USDC inputs)
 - [ ] Flag if a DCA was closed
-- [ ] Add a --no-filter CLI flag to output every transaction despite input amount or input token
+- [x] Add a --no-filter CLI flag to output every transaction despite input amount or input token (this can be made cleaner to be honest, a refactor is definitely necessary as the codebase grows)
 - [ ] Auto-reconnect when websocket connection is dropped
 - [ ] (Longer term) add trade execution to frontrun large DCAs, close position if DCA is cancelled
+- [ ] Refactor
 
 # Notes
 This was one of my earlier Rust scripts. I intend to rewrite this more idiomatically and with better error handling. Working with the Jupiter DCA IDL has given me an idea to build a library (perhaps a macro will suffice?) that takes in an IDL as input and then is able to deserialize the transaction data such that the user can access the fields as they would expect to. I don't think this will be too hard to implement for Anchor programs and is a direction I would be interested in pursuing in the future.
